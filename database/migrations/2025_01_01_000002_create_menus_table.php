@@ -19,7 +19,11 @@ return new class extends Migration
             $table->string('sayur');
             $table->string('buah');
             $table->string('kategori_bahan_utama');
-            $table->integer('vendor_id');
+            $table->foreignId('vendor_id')->constrained('vendors')->onDelete('cascade');
+            $table->integer('harga')->default(0);
+            $table->integer('jumlah_vote')->default(0);
+            $table->date('terakhir_dipilih')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
