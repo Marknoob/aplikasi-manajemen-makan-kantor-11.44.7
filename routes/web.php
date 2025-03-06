@@ -15,12 +15,8 @@ Route::get('/db', function () {
 });
 
 Route::get('/db-data', function () {
-    return view('db-data', ['title' => 'DB-Data', 'menus' => Menu::all(), 'targetMenu' => Menu::find(3)]);
+    return view('db-data', ['title' => 'DB-Data', 'menus' => Menu::all(), 'targetMenu' => Menu::find(1)]);
 });
-
-// Route::get('/menus-management', function () {
-//     return view('menus.index', ['menus' => Menu::all()]);
-// });
 
 // Master
 Route::resource('menus', MenusController::class);

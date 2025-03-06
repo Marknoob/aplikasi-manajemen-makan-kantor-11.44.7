@@ -61,7 +61,7 @@
                 <div class="mb-3">
                     <label for="vendor_id" class="form-label">Pilih Vendor</label>
                     <select class="form-control" id="vendor_id" name="vendor_id" required>
-                        <option value="" disabled selected>Pilih Vendor</option>
+                        <option value="" disabled selected>-- Pilih Vendor --</option>
                         @foreach ($vendors as $vendor)
                             <option value="{{ $vendor->id }}" {{ isset($menu) && $menu->vendor_id == $vendor->id ? 'selected' : '' }}>
                                 {{ $vendor->nama }}

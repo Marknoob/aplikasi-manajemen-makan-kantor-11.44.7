@@ -15,17 +15,6 @@
         <p>Menu-{{$menu->id}}: {{$menu->nama_menu}}</p>
     @endforeach
 
-    <div class="card">
-        <div class="card-header">
-            Featured
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
-    </div>
-
     <div>
         <?php
             // Fungsi untuk menghitung panjang vektor (magnitude)
@@ -37,7 +26,7 @@
                 }
                 return sqrt($sum);
             }
-
+    
             // Fungsi untuk menghitung dot product antara dua vektor
             function calculateDotProduct($vector1, $vector2)
             {

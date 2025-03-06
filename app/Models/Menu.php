@@ -25,4 +25,9 @@ class Menu extends Model
     {
         return $this->belongsTo(Vendor::class);
     }
+
+    public function menusDeck()
+    {
+        return $this->hasMany(MenusDeck::class);
+    }
 }
