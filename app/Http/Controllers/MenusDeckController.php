@@ -12,9 +12,12 @@ class MenusDeckController extends Controller
     public function index()
     {
         $menusDeck = MenusDeck::with('transaction')
+        ->orderBy('tanggal_pelaksanaan', 'asc')
         ->get()
         ->map(function ($menuDeck) {
-            $menuDeck->hasPaidTransaction = $menuDeck->transaction && $menuDeck->transaction->status_transaksi;
+                $menuDeck->hasPaidTransaction = $menuDeck->transaction->tanggal_transaksi != null;
+                $menuDeck->transaction_id = $menuDeck->transaction->id;
+                $menuDeck->menuVoted = $menuDeck->menu && $menuDeck->menu->jumlah_vote > 0;
             return $menuDeck;
         });
 
@@ -57,8 +60,9 @@ class MenusDeckController extends Controller
 
         // Buat transaksi otomatis berdasarkan MenusDeck yang baru dibuat
         $menusDeck->transaction()->create([
+            'menus_deck_id' => $menusDeck->id,
             'status_transaksi' => false,
-            'tanggal_transaksi' => now(),
+            'tanggal_transaksi' => null,
             'file_path' => null,
             'catatan' => null,
         ]);

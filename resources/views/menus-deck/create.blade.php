@@ -12,7 +12,9 @@
 
 <body>
     <div class="m-3">
-        <div class="h2 mb-4">Menus Deck</div>
+        <div class="h2 mb-4">
+            <a href="{{ route('menus-deck.index') }}" class="text-decoration-none text-dark">Menus Deck</a>
+        </div>
 
         <div class="card p-3">
             <form action="{{ route('menus-deck.store') }}" method="POST">

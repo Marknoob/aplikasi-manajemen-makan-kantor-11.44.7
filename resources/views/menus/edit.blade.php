@@ -65,7 +65,7 @@
                 <div class="mb-3">
                     <label for="terakhir_dipilih" class="form-label">Terakhir Dipilih</label>
                     <input type="text" class="form-control" id="terakhir_dipilih" name="terakhir_dipilih"
-                        value="{{ $menu->terakhir_dipilih !=null ? \Carbon\Carbon::parse($menu->terakhir_dipilih)->format('Y-m-d') : '-' }}" disabled>
+                        value="{{ $menu->terakhir_dipilih != null ? \Carbon\Carbon::parse($menu->terakhir_dipilih)->format('Y-m-d') : '-' }}" disabled>
                 </div>
 
 
@@ -98,7 +98,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                <a href="{{ route('menus.index') }}" class="btn btn-secondary">Batal</a>
+                <a href="{{ url()->previous() }}" class="btn btn-secondary">Batal</a>
             </form>
         </div>
 

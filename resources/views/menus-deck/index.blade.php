@@ -44,16 +44,16 @@
                             <td>{{$menuDeck->total_serve}}</td>
                             <td>
                                 @if($menuDeck->hasPaidTransaction)
-                                    <a href="{{ route('transaction.check', $menuDeck->id) }}">tombol cek transaksi</a>
+                                    <a href="{{ route('transactions.show',  $menuDeck->transaction_id) }}">Paid</a>
                                 @else
-                                    no tombol
+                                    <a href="{{ route('transactions.edit',  $menuDeck->transaction_id) }}">Not Paid</a>
                                 @endif
                             </td>
                             <td>
-                                @if($menuDeck->hasPaidTransaction)
-                                    <a href="">tombol cek vote</a>
+                                @if($menuDeck->menuVoted)
+                                    <a href="{{ route('menus.show', ['menu' => $menuDeck->menu->id]) }}">Voted</a>
                                 @else
-                                    <a href="">vote now</a>
+                                    <a href="{{ route('menus.edit', ['menu' => $menuDeck->menu->id]) }}">Not Voted</a>
                                 @endif
                             </td>
                         </tr>

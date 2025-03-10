@@ -75,7 +75,7 @@
                     value="{{ $menu->is_active ? 'Aktif' : 'Nonaktif' }}" disabled>
             </div>
 
-            <a href="{{ route('menus.index') }}" class="btn btn-secondary mt-2">Kembali</a>
+            <a href="{{ url()->previous() }}" class="btn btn-secondary mt-2">Kembali</a>
         </div>
     </div>
 

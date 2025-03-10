@@ -12,7 +12,9 @@
 
 <body>
     <div class="m-3">
-        <div class="h2 mb-4">Menus Deck</div>
+        <div class="h2 mb-4">
+            <a href="{{ route('menus-deck.index') }}" class="text-decoration-none text-dark">Menus Deck</a>
+        </div>
 
         <div class="card p-3">
             <div class="mb-3">
@@ -38,7 +40,7 @@
                     value="{{ $menusDeck->tanggal_pelaksanaan }}" disabled>
             </div>
 
-            <a href="{{ route('menus-deck.index') }}" class="btn btn-secondary mt-2">Kembali</a>
+            <a href="{{ url()->previous() }}" class="btn btn-secondary mt-2">Kembali</a>
         </div>
     </div>
 
