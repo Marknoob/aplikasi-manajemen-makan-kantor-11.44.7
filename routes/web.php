@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\MenusDeckController;
+use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\VendorsController;
 use App\Models\Menu;
 use Illuminate\Support\Facades\Route;
@@ -25,3 +26,4 @@ Route::resource('vendors', VendorsController::class);
 
 // Transaksi
 Route::resource('menus-deck', MenusDeckController::class);
+Route::resource('transactions', TransactionsController::class);
