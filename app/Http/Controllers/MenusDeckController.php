@@ -5,29 +5,95 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\MenusDeck;
 use App\Models\Menu;
+use App\Models\MenuDeckExpense;
+use App\Models\MenuDeckPayment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class MenusDeckController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $menusDeck = MenusDeck::with('transaction')
-        ->orderBy('tanggal_pelaksanaan', 'asc')
+        Carbon::setLocale('id');
+
+        // $bulan = 4;
+        // $tahun = 2025;
+        $bulan = $request->query('bulan', now()->month);
+        $tahun = $request->query('tahun', now()->year);
+        $periode = sprintf('%04d-%02d', $tahun, $bulan);
+
+        $tanggalAwalBulan = Carbon::createFromDate($tahun, $bulan, 1);
+        $tanggalAkhirBulan = $tanggalAwalBulan->copy()->endOfMonth();
+
+        // Cari Senin pertama (bisa dari bulan sebelumnya)
+        $tanggalAwal = $tanggalAwalBulan->copy()->startOfWeek(Carbon::MONDAY);
+        // Cari Jumat terakhir (bisa sampai bulan berikutnya)
+        $tanggalAkhir = $tanggalAkhirBulan->copy()->endOfWeek(Carbon::FRIDAY);
+
+        $weeks = [];
+        $currentWeek = [];
+
+        $current = $tanggalAwal->copy();
+
+        $menusDecks = MenusDeck::with('menu.vendor')
+        ->whereBetween('tanggal_pelaksanaan', [$tanggalAwal, $tanggalAkhir])
         ->get()
-        ->map(function ($menuDeck) {
-                $menuDeck->hasPaidTransaction = $menuDeck->transaction->tanggal_transaksi != null;
-                $menuDeck->transaction_id = $menuDeck->transaction->id;
-                $menuDeck->menuVoted = $menuDeck->menu && $menuDeck->menu->jumlah_vote > 0;
-            return $menuDeck;
+        ->groupBy(function ($menuDeck) {
+            return Carbon::parse($menuDeck->tanggal_pelaksanaan)->format('Y-m-d');
         });
 
-        return view('menus-deck.index', compact('menusDeck'));
+        while ($current <= $tanggalAkhir) {
+            // Hanya ambil hari kerja (Senin–Jumat)
+            if ($current->isWeekday()) {
+                $dateFormatted = $current->format('Y-m-d');
+
+                $currentWeek[] = (object) [
+                    'date' => $dateFormatted,
+                    'in_month' => $current->month == $bulan,
+                    'menus_deck' => $menusDecks->get($dateFormatted) ? $menusDecks->get($dateFormatted)->first() : null,
+                ];
+            }
+
+            // Setiap Jumat, simpan minggu dan reset
+            if ($current->isFriday()) {
+                // Simpan hanya jika ada minimal 1 hari in_month = true
+                $hasInMonth = collect($currentWeek)->contains(fn ($hari) => $hari->in_month === true);
+
+                if ($hasInMonth) {
+                    $confirmed = 0;
+                    $not_confirmed = 0;
+
+                    foreach ($currentWeek as $day) {
+                        if ($day->menus_deck) {
+                            if ($day->menus_deck->status == 1) {
+                                $confirmed++;
+                            } elseif ($day->menus_deck->status == 0) {
+                                $not_confirmed++;
+                            }
+                        }
+                    }
+
+                    $weeks[] = (object) [
+                        'days' => $currentWeek,
+                        'confirmed' => $confirmed,
+                        'not_confirmed' => $not_confirmed,
+                    ];
+                }
+
+                $currentWeek = [];
+            }
+
+            $current->addDay();
+        }
+
+        return view('menus-deck.index', compact( 'weeks', 'periode'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $menus = Menu::all();
-        return view('menus-deck.create', compact('menus'));
+        $tanggal_pelaksanaan = $request->query('tanggal_pelaksanaan');
+        return view('menus-deck.create', compact('menus', 'tanggal_pelaksanaan'));
     }
 
     public function show(MenusDeck $menusDeck)
@@ -37,9 +103,32 @@ class MenusDeckController extends Controller
 
     public function edit(MenusDeck $menusDeck)
     {
-        return view('menus-deck.edit', compact('menusDeck'),[
-            'menus' => Menu::all()
-        ]);
+        $menus = Menu::all();
+        $expenses = MenuDeckExpense::where('menu_deck_id', $menusDeck->id)->get();
+        $payments = MenuDeckPayment::where('menu_deck_id', $menusDeck->id)->get();
+
+        if ($expenses != null && $payments != null) {
+            $total_biaya = $menusDeck->menu->harga * $menusDeck->total_serve;
+            foreach ($expenses as $expense) {
+                $total_biaya += $expense->jumlah_biaya;
+            }
+
+            $total_pembayaran = 0;
+            foreach ($payments as $payment) {
+                $total_pembayaran += $payment->jumlah_bayar;
+            }
+
+            // Status Bayar
+            if ($total_pembayaran >= $total_biaya) {
+                $menusDeck->status_lunas = "Paid";
+            } else if ($total_pembayaran < $total_biaya) {
+                $menusDeck->status_lunas = "Half Paid";
+            } else if ($total_pembayaran == 0) {
+                $menusDeck->status_lunas = "Not Paid";
+            }
+
+        }
+        return view('menus-deck.edit', compact('menusDeck', 'menus', 'expenses', 'payments'));
     }
 
     public function store(Request $request)
@@ -47,25 +136,24 @@ class MenusDeckController extends Controller
         $request->validate([
             'menu_id' => 'required|exists:menus,id',
             'total_serve' => 'nullable|numeric|min:1',
-            'status' => 'required|string|in:On-going,Planned,Done',
             'tanggal_pelaksanaan' => 'nullable|date',
         ]);
 
         $menusDeck = MenusDeck::create([
             'menu_id' => $request->menu_id,
             'total_serve' => $request->total_serve,
-            'status' => $request->status,
+            'status' => 0,
             'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
         ]);
 
         // Buat transaksi otomatis berdasarkan MenusDeck yang baru dibuat
-        $menusDeck->transaction()->create([
-            'menus_deck_id' => $menusDeck->id,
-            'status_transaksi' => false,
-            'tanggal_transaksi' => null,
-            'file_path' => null,
-            'catatan' => null,
-        ]);
+        // $menusDeck->transaction()->create([
+        //     'menus_deck_id' => $menusDeck->id,
+        //     'status_transaksi' => false,
+        //     'tanggal_transaksi' => null,
+        //     'file_path' => null,
+        //     'catatan' => null,
+        // ]);
 
         return redirect()->route('menus-deck.index')->with('success', 'Menu Deck berhasil ditambahkan.');
     }
@@ -75,7 +163,7 @@ class MenusDeckController extends Controller
         $request->validate([
             'menu_id' => 'required|exists:menus,id',
             'total_serve' => 'nullable|numeric|min:1',
-            'status' => 'required|string|in:On-going,Planned,Done',
+            'status' => 'required|boolean',
             'tanggal_pelaksanaan' => 'nullable|date',
         ]);
         $menusDeck->update([

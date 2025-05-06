@@ -12,7 +12,7 @@ class MenusController extends Controller
     public function index()
     {
         return view('menus.index', [
-            'menus' => Menu::all()
+            'menus' => Menu::orderBy('created_at', 'desc')->get()
         ]);
     }
 
@@ -37,8 +37,6 @@ class MenusController extends Controller
             'terakhir_dipilih' => 'nullable|date',
         ]);
 
-        // Menu::create($request->all());
-        // dd($request->all());
         Menu::create($request->all() + ['is_active' => true]);
         return redirect()->route('menus.index')->with('success', 'Menu berhasil ditambahkan.');
     }
