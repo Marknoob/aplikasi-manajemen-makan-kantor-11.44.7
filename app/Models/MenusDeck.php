@@ -19,8 +19,14 @@ class MenusDeck extends Model
     {
         return $this->belongsTo(Menu::class);
     }
-    public function transaction()
+
+    public function expenses()
     {
-        return $this->hasOne(Transaction::class, 'menu_deck_id');
+        return $this->hasMany(MenuDeckExpense::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(MenuDeckPayment::class);
     }
 }
