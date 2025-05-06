@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('menu_deck_expenses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('menu_deck_id')->constrained('menus_deck')->onDelete('cascade');
-            $table->date('tanggal_transaksi')->nullable();
-            $table->string('file_path')->nullable();
-            $table->string('catatan')->nullable();
+            $table->string('deskripsi_biaya');
+            $table->decimal('jumlah_biaya', 12, 2); // Jika butuh pecahan misal 2.643,75, 1500.50
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('menu_deck_expenses');
     }
 };

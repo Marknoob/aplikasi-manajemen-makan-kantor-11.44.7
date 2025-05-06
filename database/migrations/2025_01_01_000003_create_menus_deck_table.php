@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');
             $table->string('total_serve')->nullable();
-            $table->string('status'); // On-going / Planned / Done
+            $table->boolean('status')->default(false); // confirmed or not-confirmed
             $table->date('tanggal_pelaksanaan')->nullable();
             $table->timestamps();
         });
