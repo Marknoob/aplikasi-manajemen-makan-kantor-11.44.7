@@ -25,17 +25,20 @@
                     <select class="form-control" id="menu_id" name="menu_id" required>
                         <option value="">-- Pilih Menu --</option>
                         @foreach($menus as $menu)
-                            <option value="{{ $menu->id }}">{{ $menu->nama_menu }}</option>
+                            <option value="{{ $menu->id }}" {{ (isset($selectedMenu) && $selectedMenu->id == $menu->id) ? 'selected' : '' }}>
+                                {{ $menu->nama_menu }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
+
 
                 <div class="mb-3">
                     <label for="total_serve" class="form-label">Total Serve</label>
                     <input type="number" class="form-control" id="total_serve" name="total_serve" required>
                 </div>
 
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label for="status" class="form-label">Status</label>
                     <select class="form-control" id="status" name="status" required>
                         <option value="">-- Pilih Status --</option>
@@ -43,11 +46,11 @@
                         <option value="Planned">Planned</option>
                         <option value="Done">Done</option>
                     </select>
-                </div>
+                </div> --}}
 
                 <div class="mb-3">
                     <label for="tanggal_pelaksanaan" class="form-label">Tanggal Pelaksanaan</label>
-                    <input type="date" class="form-control" id="tanggal_pelaksanaan" name="tanggal_pelaksanaan" required>
+                    <input type="date" class="form-control" id="tanggal_pelaksanaan" name="tanggal_pelaksanaan" value="{{ old('tanggal_pelaksanaan', $tanggal_pelaksanaan ?? '') }}"  required>
                 </div>
 
 
