@@ -86,7 +86,7 @@ class MenusDeckController extends Controller
             $current->addDay();
         }
 
-        return view('menus-deck.index', compact( 'weeks', 'periode'));
+        return view('menus-deck.index', compact( 'weeks', 'periode', 'tahun', 'bulan'));
     }
 
     public function create(Request $request)
@@ -121,10 +121,14 @@ class MenusDeckController extends Controller
             // Status Bayar
             if ($total_pembayaran >= $total_biaya) {
                 $menusDeck->status_lunas = "Paid";
-            } else if ($total_pembayaran < $total_biaya) {
+            }
+            if ($total_pembayaran < $total_biaya) {
                 $menusDeck->status_lunas = "Half Paid";
-            } else if ($total_pembayaran == 0) {
+            }
+            if ($total_pembayaran == 0) {
                 $menusDeck->status_lunas = "Not Paid";
+            } else {
+                $menusDeck->status_lunas = "-";
             }
 
         }
@@ -139,21 +143,12 @@ class MenusDeckController extends Controller
             'tanggal_pelaksanaan' => 'nullable|date',
         ]);
 
-        $menusDeck = MenusDeck::create([
+        MenusDeck::create([
             'menu_id' => $request->menu_id,
             'total_serve' => $request->total_serve,
             'status' => 0,
             'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
         ]);
-
-        // Buat transaksi otomatis berdasarkan MenusDeck yang baru dibuat
-        // $menusDeck->transaction()->create([
-        //     'menus_deck_id' => $menusDeck->id,
-        //     'status_transaksi' => false,
-        //     'tanggal_transaksi' => null,
-        //     'file_path' => null,
-        //     'catatan' => null,
-        // ]);
 
         return redirect()->route('menus-deck.index')->with('success', 'Menu Deck berhasil ditambahkan.');
     }
