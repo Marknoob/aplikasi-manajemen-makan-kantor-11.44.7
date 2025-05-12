@@ -12,50 +12,35 @@
 <body>
 
     <div class="m-3">
-        <div class="h2 mb-4">Menus Deck</div>
+        <div class="h2 mb-4 d-flex justify-content-between">
+            <a class="text-decoration-none text-dark">Menus Deck</a>
+            <a type="btn" class="btn text-white" href="{{ route('menus-recommender.index', ['bulan' => $bulan, 'tahun' => $tahun]) }}"
+                style="background-color: #203454;">
+                Generate Menu
+                <i class="fa-solid fa-wand-magic-sparkles ms-3" style="color: #FFD43B;"></i>
+            </a>
+        </div>
 
         <div class="p-3 rounded-3" style="border: 1px solid #ddd; white-space: nowrap">
 
-            <div class="d-flex justify-content-end mb-3">
+            <div class="d-flex justify-content-end">
                 <input type="month" class="form-control" style="width: 200px" id="periode" name="periode" value="{{ $periode }}">
             </div>
 
-            {{-- <div class="d-flex justify-content-end mb-3">
-                <form method="GET" action="{{ route('menus-deck.index') }}" class="d-flex gap-2 align-items-center">
-                    <select name="bulan" class="form-select">
-                        @for ($i = 1; $i <= 12; $i++)
-                            <option value="{{ $i }}" {{ $i == $bulan ? 'selected' : '' }}>
-                                {{ \Carbon\Carbon::createFromDate(null, $i, 1)->translatedFormat('F') }}
-                            </option>
-                        @endfor
-                    </select>
-
-                    <select name="tahun" class="form-select">
-                        @for ($y = now()->year - 1; $y <= now()->year + 1; $y++)
-                            <option value="{{ $y }}" {{ $y == $tahun ? 'selected' : '' }}>
-                                {{ $y }}
-                            </option>
-                        @endfor
-                    </select>
-
-                    <button type="submit" class="btn btn-primary">Tampilkan</button>
-                </form>
-            </div> --}}
-
             @foreach ($weeks as $index => $week)
                 <!-- Card Title -->
-                <div class="mt-5">
+                <div class="mt-3">
                     <h4>Week {{ $index + 1 }}</h4>
                 </div>
 
-                <div class="row mt-4">
+                <div class="row mb-5">
                     <div
-                        class="rounded-2 d-flex align-items-center"
+                        class="rounded-2 d-flex align-items-center mb-5"
                         style="
                             overflow-x: auto;
                             overflow-y: hidden;
                             white-space: no-wrap;
-                            height: 350px;
+                            height: 300px;
                     ">
                         @foreach ($week->days as $day)
                             {{-- @php
@@ -215,7 +200,7 @@
                             </div>
 
                             <!-- Generate Menu -->
-                            <div class="mt-3" style="text-align: center">Generate Menu</div>
+                            {{-- <div class="mt-3" style="text-align: center">Generate Menu</div>
                             <div
                                 class="rounded-2 p-2"
                                 style="
@@ -223,11 +208,11 @@
                                     text-align: center;
                                 ">
                                 <div class="d-flex justify-content-center mb-2">
-                                    <a class="btn" href="{{ route('menus-recommender.index', ['week' => $index] ) }}" style="background-color: #203454">
+                                    <a class="btn" href="{{ route('menus-recommender.index', ['tahun' => $tahun, 'bulan' => $bulan, 'week' => $index + 1]) }}" style="background-color: #203454">
                                         <i class="fa-solid fa-wand-magic-sparkles" style="color: #FFD43B;"></i>
                                     </a>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
 
                     </div>

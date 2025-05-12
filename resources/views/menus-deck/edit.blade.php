@@ -45,7 +45,7 @@
                 <div class="mb-3">
                     <label for="tanggal_pelaksanaan" class="form-label">Tanggal Pelaksanaan</label>
                     <input type="date" class="form-control" id="tanggal_pelaksanaan" name="tanggal_pelaksanaan"
-                        value="{{ $menusDeck->tanggal_pelaksanaan }}" {{ $menusDeck->status == 1 ? 'disabled' : '' }} required>
+                        value="{{ $menusDeck->tanggal_pelaksanaan }}" {{ $menusDeck->status == 1 ? 'disabled' : '' }} required disabled>
                 </div>
 
                 @if ($menusDeck->status == 0)
@@ -276,7 +276,7 @@
                     </div>
                     <div class="modal-body text-center">
                         <p class="fs-5" style="font-weight: bold;">Apakah anda yakin mengkonfirmasi menu ini?</p>
-                        <p>*Note: Anda tidak dapat mengubah menu ini setelah dikonfirmasi</p>
+                        <p>*Note: Pastikan Pesanan Menu ini telah dikonfirmasi oleh pihak penyedia / vendor, karena Anda tidak dapat mengubah menu ini setelah dikonfirmasi</p>
                     </div>
                     <div class="modal-footer justify-content-center">
                         <button type="button" class="btn" data-bs-dismiss="modal"
@@ -312,7 +312,7 @@
         function confirmMenu() {
             // Set field status jadi 1 (confirmed)
             document.getElementById('status').value = 1;
-            document.getElementById('formEdit').submit();
+            document.getElementById('formEdit').requestSubmit();
         }
     </script>
 </body>
