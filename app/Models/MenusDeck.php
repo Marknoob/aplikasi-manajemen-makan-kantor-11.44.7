@@ -22,11 +22,11 @@ class MenusDeck extends Model
 
     public function expenses()
     {
-        return $this->hasMany(MenuDeckExpense::class);
+        return $this->hasMany(MenuDeckExpense::class, 'menu_deck_id');
     }
 
     public function payments()
     {
-        return $this->hasMany(MenuDeckPayment::class);
+        return $this->hasMany(MenuDeckPayment::class, 'menu_deck_id');
     }
 }

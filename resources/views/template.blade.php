@@ -15,7 +15,6 @@
         <div class="h2 mb-4">Page Title</div>
 
     </div>
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
 </body>
 
 </html>

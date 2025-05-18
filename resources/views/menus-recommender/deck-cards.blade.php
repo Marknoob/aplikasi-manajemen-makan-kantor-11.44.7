@@ -32,17 +32,23 @@
                         @endif
                         ;
                         position: relative;
-                        overflow: hidden;
-                        {{ $day->in_month ? 'cursor: pointer;' : '' }}" @if ($day->in_month)
-                        @endif>
-                        <img src="https://picsum.photos/200/300" alt="Menu Image" style="
+                        overflow: hidden;">
+                        {{-- <img src="https://picsum.photos/200/300" alt="Menu Image" style="
                                 width: 100px;
                                 height: 100px;
                                 border-radius: 50%;
                                 object-fit: cover;
                                 margin-top: 10px;
                                 margin-bottom: 10px;
-                            " />
+                            " /> --}}
+                        <img src="{{ asset('images/food.png') }}" alt="Menu Image" style="
+                                                                    width: 100px;
+                                                                    height: 100px;
+                                                                    border-radius: 50%;
+                                                                    object-fit: cover;
+                                                                    margin: 10px auto;
+                                                                    display: block;
+                                                                " />
                         <h6>{{ $day->menus_deck->menu->nama_menu ?? '-' }}</h6>
                         <small>{{ $day->menus_deck->menu->vendor->nama ?? '-' }}</small>
 
@@ -74,7 +80,7 @@
                             justify-content: center;
                             position: relative;
                             overflow: hidden;">
-                        <a class="btn">
+                        <a class="btn" style="pointer-events: none; cursor: default;">
                             <i class="fa-solid fa-square-plus fs-1" style="color: #74c0fc"></i>
                         </a>
                         @if (!$day->in_month)
